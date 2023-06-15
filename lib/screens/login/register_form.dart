@@ -1,5 +1,6 @@
 import 'package:dental_app/common/navigator.dart';
 import 'package:dental_app/common/routing.dart';
+import 'package:dental_app/components/gradient.dart';
 import 'package:dental_app/screens/login/view_models/register_auth_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,7 @@ class RegisterForm extends StatelessWidget {
       _nameController.text = authVm.name;
       _phoneController.text = authVm.phone;
 
-      return SingleChildScrollView(
+      return Container(
         child: Form(
           key: _formKey,
           child: Padding(
@@ -92,38 +93,43 @@ class RegisterForm extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 15.0,
-                ),
-                const SizedBox(
-                  height: 40.0,
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.of(
-                              NavigationService.navigatorKey.currentContext!,
-                              rootNavigator: true)
-                          .push(Routes.otp());
-                      // await authVm.signUpApi(context);
-                    }
-                  },
-                  style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
-                    backgroundColor: MaterialStateProperty.all(textColor),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28.0),
+                Spacer(),
+                Container(
+                  decoration: BoxDecoration(
+                      gradient: buttonGrad,
+                      borderRadius: BorderRadius.all(Radius.circular(28))),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // _formKey.currentState!.validate()
+                      if (true) {
+                        Navigator.of(
+                                NavigationService.navigatorKey.currentContext!,
+                                rootNavigator: true)
+                            .push(Routes.otp());
+                        // await authVm.signUpApi(context);
+                      }
+                    },
+                    style: ButtonStyle(
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28.0),
+                        ),
                       ),
                     ),
+                    child: const Text(
+                      "Sign-Up",
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w700),
+                    ),
                   ),
-                  child: const Text(
-                    "Sign-Up",
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400),
-                  ),
-                )
+                ),
+                SizedBox(
+                  height: 45,
+                ),
               ],
             ),
           ),

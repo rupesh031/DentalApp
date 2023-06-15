@@ -47,8 +47,9 @@ class CameraVm extends ChangeNotifier {
 
       imageFile = File(image.path);
       preview = true;
-      notifyListeners();
       // disposeCamera();
+      notifyListeners();
+
       // Uncomment the following line to upload the photo immediately
       // _uploadPhoto();
     } catch (e) {

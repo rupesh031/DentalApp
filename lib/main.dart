@@ -1,4 +1,3 @@
-import 'package:dental_app/common/loaderScreen.dart';
 import 'package:dental_app/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +27,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // final SharedPreferences prefs;
   final DataStore store;
   final UserProv userProv;
 

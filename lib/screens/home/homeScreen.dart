@@ -8,6 +8,7 @@ import 'package:dental_app/screens/home/reportCard.dart';
 import 'package:dental_app/screens/home/scanCard.dart';
 import 'package:dental_app/screens/home/view_models/home_view_model.dart';
 import 'package:dental_app/screens/login/otp.dart';
+import 'package:dental_app/screens/proflie/profile.dart';
 import 'package:dental_app/theme/color.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,7 @@ class Home extends StatelessWidget {
   static final List<Widget> _widgetOptions = <Widget>[
     const HomeScreen(),
     CameraScreen(),
-    OtpScreen(),
+    Profile(),
   ];
 
   @override
@@ -27,7 +28,10 @@ class Home extends StatelessWidget {
 
       return Scaffold(
         extendBody: true,
-        body: _widgetOptions.elementAt(homeVm.selectedIndex),
+        body: IndexedStack(
+          index: homeVm.selectedIndex,
+          children: _widgetOptions,
+        ),
         bottomNavigationBar: ClipRRect(
           clipBehavior: Clip.hardEdge,
           borderRadius: homeVm.camera
@@ -39,7 +43,6 @@ class Home extends StatelessWidget {
               : BorderRadius.all(Radius.zero),
           child: BottomNavigationBar(
             elevation: 0,
-
             backgroundColor:
                 homeVm.camera ? Color(0xff002E5B) : Colors.transparent,
             items: <BottomNavigationBarItem>[
@@ -100,7 +103,6 @@ class Home extends StatelessWidget {
             currentIndex: homeVm.selectedIndex,
             showSelectedLabels: false,
             showUnselectedLabels: false,
-            // selectedItemColor: textColor,
             unselectedIconTheme: const IconThemeData(size: 30.0),
             selectedIconTheme: const IconThemeData(size: 35.0),
             onTap: homeVm.onItemTapped,

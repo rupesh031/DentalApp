@@ -1,4 +1,5 @@
 import 'package:dental_app/common/navigator.dart';
+import 'package:dental_app/components/gradient.dart';
 import 'package:dental_app/screens/login/view_models/login_auth_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +22,7 @@ class LoginForm extends StatelessWidget {
       _phoneController.text = authVm.email;
       _passwordController.text = authVm.password;
 
-      return SingleChildScrollView(
+      return Container(
         child: Form(
           key: _formKey,
           child: Padding(
@@ -66,26 +67,33 @@ class LoginForm extends StatelessWidget {
                 const SizedBox(
                   height: 60.0,
                 ),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      await authVm.loginApi(context);
-                    }
-                  },
-                  style: ButtonStyle(
-                    padding:
-                        MaterialStateProperty.all(const EdgeInsets.all(20.0)),
-                    backgroundColor: MaterialStateProperty.all(textColor),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(28.0),
+                Spacer(),
+                Container(
+                  decoration: BoxDecoration(
+                      gradient: buttonGrad,
+                      borderRadius: BorderRadius.all(Radius.circular(28))),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await authVm.loginApi(context);
+                      }
+                    },
+                    style: ButtonStyle(
+                      padding:
+                          MaterialStateProperty.all(const EdgeInsets.all(20.0)),
+                      backgroundColor:
+                          MaterialStateProperty.all(Colors.transparent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28.0),
+                        ),
                       ),
                     ),
-                  ),
-                  child: const Text(
-                    "Login",
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.w400),
+                    child: const Text(
+                      "Login",
+                      style: TextStyle(
+                          fontSize: 20.0, fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -96,16 +104,20 @@ class LoginForm extends StatelessWidget {
                     onTap: () => Navigator.of(
                             NavigationService.navigatorKey.currentContext!,
                             rootNavigator: true)
-                        .push(Routes.home()),
+                        .pushReplacement(Routes.home()),
                     child: Text(
                       'Skip for Now',
                       style: TextStyle(
-                        color: blurBlue,
-                        fontWeight: FontWeight.w600,
+                        color: Color.fromARGB(202, 255, 255, 255),
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
                         fontSize: 15,
                       ),
                     ),
                   ),
+                ),
+                SizedBox(
+                  height: 10,
                 ),
               ],
             ),

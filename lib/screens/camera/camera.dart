@@ -15,65 +15,81 @@ class CameraScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<CameraVm>(builder: (context, cameraVm, _) {
       return Scaffold(
-        extendBody: true,
         // appBar: AppBar(
         //   backgroundColor: blurBlue,
         // ),
-        body: GestureDetector(
-          onTap: () {},
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: !cameraVm.preview
-                    ? _buildCameraPreview(cameraVm: cameraVm, context: context)
-                    : _buildImagePreview(cameraVm: cameraVm, context: context),
-              ),
-              Positioned(
-                bottom: 60,
-                left: 0,
-                right: 0,
-                child: Container(
-                  height: 70,
-                  color: cameraVm.preview
-                      ? Colors.black.withOpacity(0.5)
-                      : Colors.transparent,
-                  // decoration: BoxDecoration(
-                  //
-                  //     borderRadius:
-                  //         BorderRadius.vertical(top: Radius.circular(20))),
-                  // padding: EdgeInsets.only(bottom: 100),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      cameraVm.preview
-                          ? IconButton(
-                              onPressed: () => cameraVm.initializeCamera(),
-                              icon: Icon(
-                                Icons.arrow_back,
-                                color: Colors.white,
-                              ))
-                          : Container(),
-                      IconButton(
-                        onPressed: () => cameraVm.flipCamera(),
-                        icon: Icon(Icons.flip_camera_ios),
-                        color: Colors.white,
-                      ),
-                      IconButton(
-                        onPressed: () => cameraVm.takePhoto(),
-                        icon: Icon(Icons.camera),
-                        color: Colors.white,
-                      ),
-                      IconButton(
-                        onPressed: () => cameraVm.pickFromGallery(),
-                        icon: Icon(Icons.photo_library),
-                        color: Colors.white,
-                      ),
-                      Container()
-                    ],
+        body: Container(
+          decoration: BoxDecoration(gradient: mainGrad),
+          child: GestureDetector(
+            onTap: () {},
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: !cameraVm.preview
+                      ? _buildCameraPreview(
+                          cameraVm: cameraVm, context: context)
+                      : _buildImagePreview(
+                          cameraVm: cameraVm, context: context),
+                ),
+                Positioned(
+                  bottom: 60,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 70,
+                    color: Colors.transparent,
+                    // decoration: BoxDecoration(
+                    //
+                    //     borderRadius:
+                    //         BorderRadius.vertical(top: Radius.circular(20))),
+                    // padding: EdgeInsets.only(bottom: 100),
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: !cameraVm.preview
+                            ? [
+                                Container(),
+                                IconButton(
+                                  onPressed: () => cameraVm.flipCamera(),
+                                  icon: Icon(Icons.flip_camera_ios),
+                                  color: Colors.white,
+                                ),
+                                IconButton(
+                                  onPressed: () => cameraVm.takePhoto(),
+                                  icon: Icon(Icons.camera),
+                                  color: Colors.white,
+                                ),
+                                IconButton(
+                                  onPressed: () => cameraVm.pickFromGallery(),
+                                  icon: Icon(Icons.photo_library),
+                                  color: Colors.white,
+                                ),
+                                Container()
+                              ]
+                            : [
+                                CircleAvatar(
+                                  child: IconButton(
+                                      onPressed: () =>
+                                          cameraVm.initializeCamera(),
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.black,
+                                      )),
+                                  backgroundColor: Colors.white,
+                                ),
+                                CircleAvatar(
+                                  backgroundColor: Colors.white,
+                                  child: IconButton(
+                                      onPressed: () => {},
+                                      icon: Icon(
+                                        Icons.upload,
+                                        color: Colors.black,
+                                      )),
+                                ),
+                              ]),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -99,6 +115,26 @@ class CameraScreen extends StatelessWidget {
       return Container();
     }
 
-    return Image.file(cameraVm.imageFile!);
+    return Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 40,
+            ),
+            Text(
+              "Upload Image",
+              style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.w700,
+                  color: backgroundGrey),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Image.file(cameraVm.imageFile!)
+          ],
+        ));
   }
 }

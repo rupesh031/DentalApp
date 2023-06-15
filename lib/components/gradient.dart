@@ -35,3 +35,22 @@ const reportGrad = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
 );
+
+const greyGrad = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [
+    Color(0xff79AEC2),
+    Color.fromRGBO(0, 84, 166, 0),
+  ],
+);
+
+const buttonGrad = LinearGradient(colors: [
+  Color.fromRGBO(255, 255, 255, 150),
+  Color.fromRGBO(255, 255, 255, 200),
+  Color.fromRGBO(255, 255, 255, 150),
+], stops: [
+  0.10,
+  0.5,
+  1
+], begin: Alignment.centerLeft, end: Alignment.centerRight);
