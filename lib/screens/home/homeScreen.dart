@@ -1,21 +1,24 @@
 import 'package:decorated_icon/decorated_icon.dart';
 import 'package:dental_app/common/routing.dart';
 import 'package:dental_app/components/gradient.dart';
+import 'package:dental_app/providers/user_info.dart';
 import 'package:dental_app/screens/camera/camera.dart';
 import 'package:dental_app/screens/camera/view_model/cameravm.dart';
 import 'package:dental_app/screens/home/home.dart';
 import 'package:dental_app/screens/home/reportCard.dart';
 import 'package:dental_app/screens/home/scanCard.dart';
 import 'package:dental_app/screens/home/view_models/home_view_model.dart';
+import 'package:dental_app/screens/login/login_screen.dart';
 import 'package:dental_app/screens/login/otp.dart';
 import 'package:dental_app/screens/proflie/profile.dart';
 import 'package:dental_app/theme/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
-  static final List<Widget> _widgetOptions = <Widget>[
+  Home({Key? key}) : super(key: key);
+  List<Widget> _widgetOptions = <Widget>[
     const HomeScreen(),
     CameraScreen(),
     Profile(),
@@ -23,9 +26,10 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<HomeVm, CameraVm>(builder: (context, homeVm, cameraVm, _) {
+    return Consumer3<HomeVm, CameraVm, UserProv>(
+        builder: (context, homeVm, cameraVm, userProv, _) {
       homeVm.cameraVm = cameraVm;
-
+      if (!userProv.isLoggedIn) _widgetOptions[2] = LoginPage();
       return Scaffold(
         extendBody: true,
         body: IndexedStack(

@@ -3,6 +3,7 @@ import 'package:dental_app/screens/home/view_models/home_view_model.dart';
 import 'package:dental_app/screens/login/repo/auth_repo.dart';
 import 'package:dental_app/screens/login/view_models/login_auth_vm.dart';
 import 'package:dental_app/screens/login/view_models/register_auth_vm.dart';
+import 'package:dental_app/screens/splash/viewModel/splashVm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +31,11 @@ class AppProviders extends StatelessWidget {
       providers: [
         Provider<AuthRepo>(create: (_) => AuthRepo(store: store)),
         ChangeNotifierProvider(create: (_) => userProv),
+        ChangeNotifierProvider(
+            create: (_) => SplashVM(
+                store: store,
+                userProv: userProv,
+                authRepo: AuthRepo(store: store))),
         ChangeNotifierProvider(
             create: (_) => LoginAuthViewModel(
                 myRepo: AuthRepo(store: store), userProvider: userProv)),

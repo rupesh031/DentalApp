@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '/common/data_store.dart';
 
@@ -29,24 +30,24 @@ class AuthRepo {
     return userMod;
   }
 
-  Future<UserModel?> signInWithEmailAndPassword({
-    String? email,
-    String? password,
-  }) async {
-    final credential = await _firebaseAuth.signInWithEmailAndPassword(
-      email: email!,
-      password: password!,
-    );
+  // Future<UserModel?> signInWithEmailAndPassword({
+  //   String? email,
+  //   String? password,
+  // }) async {
+  //   final credential = await _firebaseAuth.signInWithEmailAndPassword(
+  //     email: email!,
+  //     password: password!,
+  //   );
 
-    //TODO - Uncomment before Release
-    if (!credential.user!.emailVerified) {
-      signOut();
-      print("User Logged out");
-      throw FirebaseAuthException(code: 'unverified-email');
-    }
+  //   //TODO - Uncomment before Release
+  //   if (!credential.user!.emailVerified) {
+  //     signOut();
+  //     print("User Logged out");
+  //     throw FirebaseAuthException(code: 'unverified-email');
+  //   }
 
-    return _userFromFirebase(user: credential.user);
-  }
+  //   return _userFromFirebase(user: credential.user);
+  // }
 
   Future<bool> isUserReg(String email) async {
     var user = await _firebaseFirestore
@@ -59,7 +60,6 @@ class AuthRepo {
 
   Future<UserModel?> getUserbyId(String uid) async {
     var user = await _firebaseFirestore.collection('users').doc(uid).get();
-    user.data()!.putIfAbsent("lastSeen", () => {});
 
     UserModel userMod = UserModel(
       uid: user['uid'],
@@ -70,42 +70,112 @@ class AuthRepo {
     return userMod;
   }
 
-  Future<void> verifyPhoneNumber({phoneNumber, name, context}) async {
+  Future<void> verifyPhoneNumber({phoneNumber, context}) async {
     await _firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await _firebaseAuth.signInWithCredential(credential);
-        UserModel userMod = UserModel(phone: phoneNumber, name: name);
-
-        //create user
-      },
+      verificationCompleted: (PhoneAuthCredential credential) async {},
       verificationFailed: (FirebaseAuthException e) {
-        throw e;
+        print(e.code);
+        Fluttertoast.showToast(
+            msg: e.code,
+            toastLength: Toast.LENGTH_LONG,
+            backgroundColor: Colors.red);
       },
       codeSent: (String verificationId, int? resendToken) async {
-        return;
+        print(verificationId);
+        store.setString("otp", verificationId);
+        Fluttertoast.showToast(
+            msg: "OTP Sent",
+            toastLength: Toast.LENGTH_LONG,
+            backgroundColor: Color.fromARGB(255, 255, 255, 255));
+        await Navigator.of(NavigationService.navigatorKey.currentContext!,
+                rootNavigator: true)
+            .push(Routes.otp());
       },
       codeAutoRetrievalTimeout: (String verificationId) {
-        // TODO: Handle timeout situation
+        store.delete(key: "otp");
       },
     );
   }
 
-  // Future<UserModel?> createUserWithPhone({
-  //   String? name,
-  //   String? phone,
-  // }) async {
-  //   final credential = await _firebaseAuth.verifyPhoneNumber(
-  //     phoneNumber: phone!,
-  //   );
+  Future<String?> siginPhone({verificationId, otp}) async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+        verificationId: verificationId, smsCode: otp);
 
-  //   // TODO : Uncomment before release
-  //   credential.user!.sendEmailVerification();
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      String? uid = userCredential.user?.uid;
+      Fluttertoast.showToast(
+          msg: "OTP Verfied",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Color.fromARGB(255, 232, 227, 227));
 
-  //   return UserModel(
-  //     uid: credential.user!.uid,
-  //   );
-  // }
+      return uid;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> chekSignIn({phone, context}) async {
+    var userQuery = await _firebaseFirestore
+        .collection("users")
+        .where("phone", isEqualTo: phone)
+        .limit(1)
+        .get();
+    if (userQuery.docs.isNotEmpty) {
+      verifyPhoneNumber(context: context, phoneNumber: phone);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Sign Up First",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Color.fromARGB(255, 232, 227, 227));
+    }
+  }
+
+  Future<void> chekSignUp({phone, context}) async {
+    var userQuery = await _firebaseFirestore
+        .collection("users")
+        .where("phone", isEqualTo: phone)
+        .limit(1)
+        .get();
+    if (!userQuery.docs.isNotEmpty) {
+      verifyPhoneNumber(context: context, phoneNumber: phone);
+    } else {
+      Fluttertoast.showToast(
+          msg: "Phone number already in use",
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Color.fromARGB(255, 232, 227, 227));
+    }
+  }
+
+  Future<UserModel?> createUserWithPhone({
+    String? name,
+    String? phone,
+    String? uid,
+  }) async {
+    var userQuery = await _firebaseFirestore
+        .collection("users")
+        .where("phone", isEqualTo: phone)
+        .limit(1)
+        .get();
+    if (!userQuery.docs.isNotEmpty) return getUserbyId(uid.toString());
+
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+    try {
+      await usersCollection.doc(uid).set({
+        'name': name,
+        'phone': phone,
+        'id': uid,
+      });
+    } on FirebaseAuthException catch (e) {
+      Fluttertoast.showToast(
+          msg: e.code,
+          toastLength: Toast.LENGTH_LONG,
+          backgroundColor: Color.fromARGB(255, 232, 227, 227));
+    }
+  }
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();

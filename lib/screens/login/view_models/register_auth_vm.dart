@@ -10,6 +10,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../common/navigator.dart';
 
@@ -77,31 +78,18 @@ class RegisterAuthViewModel extends ChangeNotifier {
         .set(userModel.toJson());
   }
 
+  Future<void> sigInpApi(BuildContext context) async {
+    myRepo.chekSignIn(phone: phone, context: context);
+  }
+
   Future<void> signUpApi(BuildContext context) async {
     Map data = {
       'phone': _phone.trim(),
       'name': _name.trim(),
     };
 
-    setLoading(true);
-
     try {
-      await myRepo.verifyPhoneNumber(
-          phoneNumber: data['phone'], name: data['name']);
-      if (store.getString("otp") != null) {
-        setLoading(false);
-        await Navigator.of(NavigationService.navigatorKey.currentContext!,
-                rootNavigator: true)
-            .push(Routes.otp());
-      }
-      // String? uid = value?.uid;
-
-      UserModel userModel = UserModel(
-        uid: "uid",
-        phone: data['phone'],
-        name: data['name'],
-      );
-      postDetailsToFirestore(userModel);
+      await myRepo.chekSignUp(phone: data['phone'], context: context);
     } on FirebaseAuthException catch (e) {
       String errorText = '';
       switch (e.code) {
@@ -113,6 +101,8 @@ class RegisterAuthViewModel extends ChangeNotifier {
           errorText =
               'SMS quota for this project has been exceeded. Please try again later.';
           break;
+        case 'code-sent':
+
         case 'unknown':
           errorText = 'An unknown error occurred. Please try again.';
           break;
@@ -128,6 +118,44 @@ class RegisterAuthViewModel extends ChangeNotifier {
           toastLength: Toast.LENGTH_LONG,
           backgroundColor: Colors.red);
     }
+  }
+
+  Future<void> handleOtp(context) async {
+    try {
+      String errorText = '';
+      print(_otp);
+      String? verf = store.getString("otp").toString();
+      print(verf);
+      String? uid = await myRepo.siginPhone(verificationId: verf, otp: _otp);
+      print(uid);
+      if (uid != null) {
+        UserModel? value = await myRepo.createUserWithPhone(
+            phone: phone, name: name, uid: uid);
+        if (value != null) {
+          userProvider.updateUserInfo(value);
+        }
+        await Navigator.of(NavigationService.navigatorKey.currentContext!,
+                rootNavigator: true)
+            .pushReplacement(Routes.home());
+      }
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'invalid-verification-code':
+          errorText = 'Invalid verification code. Please try again.';
+          break;
+        case 'too-many-requests':
+          errorText =
+              'Too many OTP verification attempts. Please try again later.';
+          break;
+        default:
+          errorText =
+              'An error occurred while signing in with OTP. Please try again.';
+      }
+    }
+    Fluttertoast.showToast(
+        msg: errorText,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red);
   }
 
   void signOut() {

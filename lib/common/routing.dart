@@ -24,10 +24,9 @@ class Routes {
         builder: (context) => widgetProvider(context),
       );
 
-  static Route home() => cupertinoRoute(RouteName.home, (ctx) => const Home());
+  static Route home() => cupertinoRoute(RouteName.home, (ctx) => Home());
 
-  static Route otp() =>
-      cupertinoRoute(RouteName.home, (ctx) => const OtpScreen());
+  static Route otp() => cupertinoRoute(RouteName.home, (ctx) => OtpScreen());
 
   static Route scanner() =>
       cupertinoRoute(RouteName.home, (ctx) => CameraScreen());

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:dental_app/components/gradient.dart';
 import 'package:dental_app/screens/camera/view_model/cameravm.dart';

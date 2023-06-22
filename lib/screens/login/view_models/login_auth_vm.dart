@@ -73,12 +73,12 @@ class LoginAuthViewModel with ChangeNotifier {
     setLoading(true);
 
     try {
-      var value = await myRepo.signInWithEmailAndPassword(
-        email: data['email'],
-        password: data['password'],
-      );
+      // var value = await myRepo.signInWithEmailAndPassword(
+      //   email: data['email'],
+      //   password: data['password'],
+      // );
       // print(value);
-      userProvider.updateUserInfo(value!);
+      // userProvider.updateUserInfo(value!);
 
       setLoading(false);
 

@@ -23,8 +23,10 @@ class RegisterForm extends StatelessWidget {
       _nameController.text = authVm.name;
       _phoneController.text = authVm.phone;
 
-      return Container(
-        child: Form(
+      return Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
+        body: Form(
           key: _formKey,
           child: Padding(
             padding: const EdgeInsets.all(30.0),
@@ -100,14 +102,15 @@ class RegisterForm extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(28))),
                   child: ElevatedButton(
                     onPressed: () async {
-                      // _formKey.currentState!.validate()
-                      if (true) {
-                        Navigator.of(
-                                NavigationService.navigatorKey.currentContext!,
-                                rootNavigator: true)
-                            .push(Routes.otp());
-                        // await authVm.signUpApi(context);
-                      }
+                      _formKey.currentState!.validate();
+                      await authVm.signUpApi(context);
+                      // if (true) {
+                      //   Navigator.of(
+                      //           NavigationService.navigatorKey.currentContext!,
+                      //           rootNavigator: true)
+                      //       .push(Routes.otp());
+                      //   await authVm.signUpApi(context);
+                      // }
                     },
                     style: ButtonStyle(
                       padding:

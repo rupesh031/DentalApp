@@ -22,7 +22,7 @@ class LoginPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(gradient: mainGrad),
                 child: Scaffold(
-                    resizeToAvoidBottomInset: true,
+                    resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.transparent,
                     appBar: AppBar(
                       backgroundColor: Colors.transparent,

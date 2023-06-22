@@ -1,6 +1,7 @@
 import 'package:dental_app/common/navigator.dart';
 import 'package:dental_app/components/gradient.dart';
 import 'package:dental_app/screens/login/view_models/login_auth_vm.dart';
+import 'package:dental_app/screens/login/view_models/register_auth_vm.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,9 +19,8 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LoginAuthViewModel>(builder: (context, authVm, _) {
-      _phoneController.text = authVm.email;
-      _passwordController.text = authVm.password;
+    return Consumer<RegisterAuthViewModel>(builder: (context, authVm, _) {
+      _phoneController.text = authVm.phone;
 
       return Container(
         child: Form(
@@ -42,12 +42,12 @@ class LoginForm extends StatelessWidget {
                   ),
                   controller: _phoneController,
                   onChanged: (value) {
-                    authVm.setEmail(value);
+                    authVm.setphone(value);
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Please enter an Mobile Number";
-                    } else if (authVm.email.toString().length < 10) {
+                    } else if (authVm.phone.toString().length < 13) {
                       return "Not a valid Mobile Number";
                     }
                     return null;
@@ -59,7 +59,7 @@ class LoginForm extends StatelessWidget {
                     contentPadding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 15.0),
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     label: Text(
-                      "+91 1234567890",
+                      "+911234567890",
                       style: TextStyle(color: Color(0xffD9D9D9)),
                     ),
                   ),
@@ -75,7 +75,7 @@ class LoginForm extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        await authVm.loginApi(context);
+                        await authVm.sigInpApi(context);
                       }
                     },
                     style: ButtonStyle(
@@ -117,7 +117,7 @@ class LoginForm extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 20,
                 ),
               ],
             ),

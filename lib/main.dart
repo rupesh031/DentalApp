@@ -1,4 +1,5 @@
 import 'package:dental_app/screens/login/login_screen.dart';
+import 'package:dental_app/screens/splash/splash.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,7 +50,7 @@ class MyApp extends StatelessWidget {
           fontFamily: 'Poppins',
           primarySwatch: Colors.blue,
         ),
-        home: const LoginPage(),
+        home: const SplashScreen(),
       ),
     );
   }
